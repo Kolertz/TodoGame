@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35514.174 d17.12
+VisualStudioVersion = 17.12.35514.174
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "ApiGateway\ApiGateway.csproj", "{E8A4DD95-DD80-424E-8C95-A2360E657D30}"
 EndProject
@@ -11,9 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoList", "TodoList\TodoLi
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{06020914-AFDD-440C-A512-EED6ED84BC1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BattleSystem", "BattleSystem\BattleSystem.csproj", "{26BAD8D0-FA6F-4B41-B2FE-66C2A21BBE30}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Battle", "BattleSystem\Battle.csproj", "{26BAD8D0-FA6F-4B41-B2FE-66C2A21BBE30}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat", "Chat\Chat.csproj", "{D445B13C-59F2-47B2-BAC6-B1D50F08DFCD}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "spa", "..\spa\spa.esproj", "{A450A483-AD6F-BE2D-4BBD-A7719B34A027}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,8 +47,17 @@ Global
 		{D445B13C-59F2-47B2-BAC6-B1D50F08DFCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D445B13C-59F2-47B2-BAC6-B1D50F08DFCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D445B13C-59F2-47B2-BAC6-B1D50F08DFCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A450A483-AD6F-BE2D-4BBD-A7719B34A027}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A450A483-AD6F-BE2D-4BBD-A7719B34A027}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A450A483-AD6F-BE2D-4BBD-A7719B34A027}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A450A483-AD6F-BE2D-4BBD-A7719B34A027}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A450A483-AD6F-BE2D-4BBD-A7719B34A027}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A450A483-AD6F-BE2D-4BBD-A7719B34A027}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {700B355C-7119-4C3A-8648-5BAAB6F27CE6}
 	EndGlobalSection
 EndGlobal

@@ -11,3 +11,10 @@ services:
       context: TodoList
       dockerfile: Dockerfile
 
+
+  user:
+    image: ${DOCKER_REGISTRY-}user
+    build:
+      context: User
+      dockerfile: Dockerfile
+

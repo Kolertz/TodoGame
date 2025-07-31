@@ -5,6 +5,8 @@ using System.Text.Json.Serialization.Metadata;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
+builder.Services.AddSignalR();
+
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);

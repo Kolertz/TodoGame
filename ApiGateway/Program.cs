@@ -1,7 +1,32 @@
 
 //namespace ApiGateway;
 
+using Ocelot.DependencyInjection;
+using Ocelot.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile("ocelot.json");
+builder.Services.AddOcelot(builder.Configuration);
+
+builder.Services.AddAuthentication()
+    .AddJwtBearer("Keycloak", options =>
+    {
+        options.Authority = "http://localhost:8080/realms/Default";
+        options.Audience = "ocelot-gateway";
+        options.RequireHttpsMetadata = false; // Только для разработки
+        options.TokenValidationParameters = new()
+        {
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidIssuer = "http://localhost:8080/realms/Default",
+            NameClaimType = "preferred_username",
+            RoleClaimType = "roles"
+        };
+    });
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("Admin", policy => policy.RequireClaim("roles", "app-admin"));
 
 // Add services to the container.
 builder.Services.AddAuthorization();
@@ -21,15 +46,5 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-{
-            
-})
-.WithName("GetWeatherForecast");
-
+app.UseOcelot().Wait();
 app.Run();

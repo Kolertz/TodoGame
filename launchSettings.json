@@ -5,7 +5,8 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "apigateway": "StartDebugging",
-        "todolist": "StartDebugging"
+        "todolist": "StartDebugging",
+        "user": "StartDebugging"
       }
     }
   }
