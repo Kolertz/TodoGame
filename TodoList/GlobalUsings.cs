@@ -1,0 +1,15 @@
+﻿global using TodoList.Dtos;
+global using TodoList.Models;
+global using TodoList.Services;
+global using TodoList.Data;
+global using Microsoft.EntityFrameworkCore;
+global using TodoList.Requests;
+global using System.Text.Json.Serialization;
+global using Mapster;
+global using System.Reflection;
+global using Microsoft.AspNetCore.Routing.Constraints;
+global using Shared.Extensions;
+global using Microsoft.AspNetCore.Mvc;
+global using Shared.Constants;
+global using Shared.Interfaces;
+global using Shared.Services;

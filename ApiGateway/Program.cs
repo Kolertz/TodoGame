@@ -1,6 +1,3 @@
-
-//namespace ApiGateway;
-
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 

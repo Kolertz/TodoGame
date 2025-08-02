@@ -1,42 +1,89 @@
-using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace TodoList;
-public class Program
+
+var builder = WebApplication.CreateSlimBuilder(args);
+
+var services = builder.Services;
+
+services.ConfigureHttpJsonOptions(options =>
 {
-    public static void Main(string[] args)
-    {
-        var builder = WebApplication.CreateSlimBuilder(args);
+    options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
+});
 
-        builder.Services.ConfigureHttpJsonOptions(options =>
-        {
-            options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
-        });
+services.Configure<ApiBehaviorOptions>(options => options.SuppressInferBindingSourcesForParameters = true);
 
-        var app = builder.Build();
+var assembly = Assembly.GetExecutingAssembly();
+var config = TypeAdapterConfig.GlobalSettings;
+config.Scan(assembly);
 
-        var sampleTodos = new Todo[] {
-            new(1, "Walk the dog"),
-            new(2, "Do the dishes", DateOnly.FromDateTime(DateTime.Now)),
-            new(3, "Do the laundry", DateOnly.FromDateTime(DateTime.Now.AddDays(1))),
-            new(4, "Clean the bathroom"),
-            new(5, "Clean the car", DateOnly.FromDateTime(DateTime.Now.AddDays(2)))
-        };
+services.AddCustomSwagger(new()
+{
+    Version = "v1",
+    Title = assembly.GetName().Name,
+    Description = "An ASP.NET Core Web API"
+});
 
-        var todosApi = app.MapGroup("/todos");
-        todosApi.MapGet("/", () => sampleTodos);
-        todosApi.MapGet("/{id}", (int id) =>
-            sampleTodos.FirstOrDefault(a => a.Id == id) is { } todo
-                ? Results.Ok(todo)
-                : Results.NotFound());
+services.Configure<RouteOptions>(options => options.SetParameterPolicy<RegexInlineRouteConstraint>("regex"));
 
-        app.Run();
-    }
+services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+services.AddHttpContextAccessor();
+services.AddScoped<TaskService>();
+services.AddScoped<IUserContext, UserContext>();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-public record Todo(int Id, string? Title, DateOnly? DueBy = null, bool IsComplete = false);
+var tasksApi = app.MapGroup("/tasks");
 
-[JsonSerializable(typeof(Todo[]))]
+// Получить задачи пользователя
+tasksApi.MapGet("/", async (TaskService taskService) =>
+{
+    var tasks = await taskService.GetTasksByUserAsync();
+    return Results.Ok(tasks);
+})
+.Produces<List<TaskListItemDto>>(StatusCodes.Status200OK);
+
+// Создать задачу
+tasksApi.MapPost("/", async (CreateTaskRequest request, TaskService taskService) =>
+{
+    var result = await taskService.CreateTaskAsync(request);
+    return Results.Created($"/tasks/{result.Id}", result);
+})
+.Produces<TaskDto>(StatusCodes.Status201Created);
+
+// Обновить задачу
+tasksApi.MapPut("/{id:int}", async (int id, UpdateTaskRequest request, TaskService taskService) =>
+{
+    var isSuccess = await taskService.UpdateTaskAsync(id, request);
+    return isSuccess ? Results.NoContent() : Results.NotFound();
+})
+.Produces(StatusCodes.Status204NoContent)
+.Produces(StatusCodes.Status404NotFound);
+
+// Получить задачу по id
+tasksApi.MapGet("/{id:int}", async (int id, TaskService taskService) =>
+{
+    var task = await taskService.GetTaskAsync(id);
+    return task == null ? Results.NotFound() : Results.Ok(task);
+})
+.Produces<TaskDto>(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status404NotFound);
+
+app.Run();
+
+public partial class Program { } // Делает приложение доступным для тестов
+
+[JsonSerializable(typeof(TodoTask))]
+[JsonSerializable(typeof(TaskDto))]
+[JsonSerializable(typeof(TaskListItemDto))]
+[JsonSerializable(typeof(CreateTaskRequest))]
+[JsonSerializable(typeof(UpdateTaskRequest))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
-
 }
